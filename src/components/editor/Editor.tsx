@@ -17,6 +17,7 @@ export function Editor() {
     dpr,
     view,
     isSpaceDown,
+    canPan,
     zoomAtCursor,
     panBy,
     resetView,
@@ -29,7 +30,7 @@ export function Editor() {
         spriteHeight={sprite.height}
         zoom={view.zoom}
         showGrid={showGrid}
-        isPanMode={isSpaceDown}
+        isPanMode={isSpaceDown && canPan}
         onToggleGrid={() => setShowGrid((v) => !v)}
         onResetView={resetView}
       />
@@ -41,6 +42,7 @@ export function Editor() {
           containerSize={containerSize}
           showGrid={showGrid}
           isSpaceDown={isSpaceDown}
+          canPan={canPan}
           onWheel={zoomAtCursor}
           onPan={panBy}
         />

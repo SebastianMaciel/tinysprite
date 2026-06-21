@@ -13,6 +13,7 @@ interface Props {
   containerSize: { w: number; h: number };
   showGrid: boolean;
   isSpaceDown: boolean;
+  canPan: boolean;
   onWheel: (dir: 1 | -1, cursorX: number, cursorY: number) => void;
   onPan: (dx: number, dy: number) => void;
 }
@@ -38,6 +39,7 @@ export function SpriteCanvas({
   containerSize,
   showGrid,
   isSpaceDown,
+  canPan,
   onWheel,
   onPan,
 }: Props) {
@@ -96,7 +98,7 @@ export function SpriteCanvas({
   }, [onWheel]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isSpaceDown) return;
+    if (!isSpaceDown || !canPan) return;
     e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
     dragStateRef.current = { pointerId: e.pointerId, lastX: e.clientX, lastY: e.clientY };
@@ -123,7 +125,7 @@ export function SpriteCanvas({
 
   const cursor = isDragging
     ? "grabbing"
-    : isSpaceDown
+    : isSpaceDown && canPan
       ? "grab"
       : "crosshair";
 

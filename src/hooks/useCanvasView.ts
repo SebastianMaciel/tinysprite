@@ -57,6 +57,7 @@ export interface UseCanvasViewResult {
   dpr: number;
   view: View;
   isSpaceDown: boolean;
+  canPan: boolean;
   zoomAtCursor: (dir: 1 | -1, cursorX: number, cursorY: number) => void;
   panBy: (dx: number, dy: number) => void;
   resetView: () => void;
@@ -160,12 +161,17 @@ export function useCanvasView(spriteW: number, spriteH: number): UseCanvasViewRe
 
   const resetView = useCallback(() => setUserView(null), []);
 
+  const canPan =
+    spriteW * view.zoom > containerSize.w ||
+    spriteH * view.zoom > containerSize.h;
+
   return {
     containerRef,
     containerSize,
     dpr,
     view,
     isSpaceDown,
+    canPan,
     zoomAtCursor,
     panBy,
     resetView,
