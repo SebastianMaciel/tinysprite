@@ -47,6 +47,30 @@ function computeFitView(
   };
 }
 
+function clampPanForView(
+  view: View,
+  containerW: number,
+  containerH: number,
+  spriteW: number,
+  spriteH: number,
+): View {
+  if (containerW === 0 || containerH === 0) return view;
+  const drawW = spriteW * view.zoom;
+  const drawH = spriteH * view.zoom;
+  // Sprite smaller than viewport: keep it fully inside [0, container - draw].
+  // Sprite larger than viewport: keep it covering the viewport entirely
+  // by clamping to [container - draw, 0] (both bounds become negative).
+  const minX = Math.min(0, containerW - drawW);
+  const maxX = Math.max(0, containerW - drawW);
+  const minY = Math.min(0, containerH - drawH);
+  const maxY = Math.max(0, containerH - drawH);
+  return {
+    zoom: view.zoom,
+    panX: Math.max(minX, Math.min(maxX, view.panX)),
+    panY: Math.max(minY, Math.min(maxY, view.panY)),
+  };
+}
+
 function readClientDpr(): number {
   return typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 }
@@ -123,40 +147,50 @@ export function useCanvasView(spriteW: number, spriteH: number): UseCanvasViewRe
     [containerSize.w, containerSize.h, spriteW, spriteH],
   );
 
-  const view: View = userView?.spriteKey === spriteKey ? userView.view : fitView;
+  const view: View = userView?.spriteKey === spriteKey
+    ? clampPanForView(userView.view, containerSize.w, containerSize.h, spriteW, spriteH)
+    : fitView;
 
   const zoomAtCursor = useCallback(
     (dir: 1 | -1, cursorX: number, cursorY: number) => {
       setUserView((prev) => {
-        const current = prev?.spriteKey === spriteKey ? prev.view : fitView;
+        const current = prev?.spriteKey === spriteKey
+          ? clampPanForView(prev.view, containerSize.w, containerSize.h, spriteW, spriteH)
+          : fitView;
         const newZoom = nextZoomStep(current.zoom, dir);
         if (newZoom === current.zoom) return prev;
         const sx = (cursorX - current.panX) / current.zoom;
         const sy = (cursorY - current.panY) / current.zoom;
+        const tentative: View = {
+          zoom: newZoom,
+          panX: cursorX - sx * newZoom,
+          panY: cursorY - sy * newZoom,
+        };
         return {
-          view: {
-            zoom: newZoom,
-            panX: cursorX - sx * newZoom,
-            panY: cursorY - sy * newZoom,
-          },
+          view: clampPanForView(tentative, containerSize.w, containerSize.h, spriteW, spriteH),
           spriteKey,
         };
       });
     },
-    [fitView, spriteKey],
+    [fitView, spriteKey, containerSize.w, containerSize.h, spriteW, spriteH],
   );
 
   const panBy = useCallback(
     (dx: number, dy: number) => {
       setUserView((prev) => {
         const current = prev?.spriteKey === spriteKey ? prev.view : fitView;
+        const tentative: View = {
+          ...current,
+          panX: current.panX + dx,
+          panY: current.panY + dy,
+        };
         return {
-          view: { ...current, panX: current.panX + dx, panY: current.panY + dy },
+          view: clampPanForView(tentative, containerSize.w, containerSize.h, spriteW, spriteH),
           spriteKey,
         };
       });
     },
-    [fitView, spriteKey],
+    [fitView, spriteKey, containerSize.w, containerSize.h, spriteW, spriteH],
   );
 
   const resetView = useCallback(() => setUserView(null), []);
