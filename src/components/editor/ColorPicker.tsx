@@ -196,8 +196,8 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
               type="button"
               className={styles.pasteBtn}
               onClick={handlePasteHex}
-              title="Pegar HEX desde portapapeles"
-              aria-label="Pegar HEX desde portapapeles"
+              data-tooltip="Pegar desde portapapeles"
+              aria-label="Pegar desde portapapeles"
             >
               <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
                 <path
@@ -233,7 +233,7 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
             style={{ background: rgbToHexStr(initialRgb[0], initialRgb[1], initialRgb[2]) }}
             onClick={resetToInitial}
             disabled={isInitial}
-            title={isInitial ? "Color anterior" : "Volver al color anterior"}
+            data-tooltip={isInitial ? "Color anterior" : "Volver al color anterior"}
             aria-label={isInitial ? "Color anterior" : "Volver al color anterior"}
           />
           <span className={styles.compareArrow} aria-hidden="true">→</span>

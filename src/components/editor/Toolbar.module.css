@@ -83,6 +83,10 @@
   cursor: pointer;
   border: 1px solid transparent;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  display: inline-grid;
+  grid-template-areas: "stack";
+  align-items: center;
+  justify-items: center;
 }
 
 .button:hover {
@@ -114,6 +118,7 @@
 
 .buttonLabel,
 .buttonKey {
+  grid-area: stack;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -121,11 +126,6 @@
 }
 
 .buttonKey {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: max-content;
-  height: max-content;
   padding: 2px 7px;
   border: 1px solid var(--border-strong);
   border-bottom-width: 2px;
@@ -138,6 +138,7 @@
   font-weight: 600;
   opacity: 0;
   pointer-events: none;
+  white-space: nowrap;
 }
 
 .buttonOn .buttonKey {
@@ -154,32 +155,6 @@
 .button:hover .buttonKey,
 .button:focus-visible .buttonKey {
   opacity: 1;
-}
-
-.tooltip {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  background: var(--text);
-  color: var(--bg);
-  font-family: var(--font-geist-sans), sans-serif;
-  font-size: 11px;
-  letter-spacing: 0;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-2px);
-  transition: opacity 0.15s ease 0.15s, transform 0.15s ease 0.15s;
-  z-index: 10;
-  box-shadow: var(--shadow-md);
-}
-
-.button:hover .tooltip,
-.button:focus-visible .tooltip {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .modeChip {

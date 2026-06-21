@@ -51,3 +51,61 @@ button {
   background: var(--accent);
   color: var(--accent-fg);
 }
+
+/* Custom tooltip pattern — apply data-tooltip="text" to any element.
+   Optional: data-tooltip-side="top" to flip above (default below).
+            data-tooltip-align="right" to right-anchor instead of center.
+*/
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -2px);
+  transition: opacity 0.15s ease 0.18s, transform 0.15s ease 0.18s;
+  z-index: 50;
+  box-shadow: var(--shadow-md);
+}
+
+[data-tooltip][data-tooltip-side="top"]::after {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform: translate(-50%, 2px);
+}
+
+[data-tooltip][data-tooltip-align="right"]::after {
+  left: auto;
+  right: 0;
+  transform: translate(0, -2px);
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+[data-tooltip][data-tooltip-side="top"]:hover::after,
+[data-tooltip][data-tooltip-side="top"]:focus-visible::after {
+  transform: translate(-50%, 0);
+}
+
+[data-tooltip][data-tooltip-align="right"]:hover::after,
+[data-tooltip][data-tooltip-align="right"]:focus-visible::after {
+  transform: translate(0, 0);
+}

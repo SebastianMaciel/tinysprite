@@ -79,7 +79,7 @@ export function Sidebar({ onOpenPicker }: Props) {
           className={styles.addBtn}
           onClick={onOpenPicker}
           aria-label="Agregar color custom"
-          title="Agregar color custom"
+          data-tooltip="Agregar color custom"
         >
           +
         </button>

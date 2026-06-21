@@ -1,6 +1,7 @@
 "use client";
 
 import { formatCombo } from "@/lib/hotkeys";
+import { useIsMac } from "@/hooks/useIsMac";
 import styles from "./Toolbar.module.css";
 
 interface Props {
@@ -38,6 +39,7 @@ function ToolButton({
   onClick,
   title,
 }: ToolButtonProps) {
+  const isMac = useIsMac();
   return (
     <button
       type="button"
@@ -47,18 +49,13 @@ function ToolButton({
       aria-pressed={pressed}
       aria-label={title}
       aria-keyshortcuts={hotkey}
+      data-tooltip={title}
+      data-tooltip-align="right"
     >
       <span className={styles.buttonLabel}>{label}</span>
-      <kbd
-        className={styles.buttonKey}
-        aria-hidden="true"
-        suppressHydrationWarning
-      >
-        {formatCombo(hotkey)}
+      <kbd className={styles.buttonKey} aria-hidden="true">
+        {formatCombo(hotkey, isMac)}
       </kbd>
-      <span className={styles.tooltip} role="tooltip">
-        {title}
-      </span>
     </button>
   );
 }

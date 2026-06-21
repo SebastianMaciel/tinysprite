@@ -32,14 +32,14 @@ export function matchesCombo(combo: string, e: KeyboardEvent): boolean {
   return e.key.toLowerCase() === key;
 }
 
-export function formatCombo(combo: string): string {
+export function formatCombo(combo: string, mac?: boolean): string {
   const { needsMod, needsShift, needsAlt, key } = parseCombo(combo);
-  const mac = isMacPlatform();
+  const isMac = mac ?? isMacPlatform();
   const parts: string[] = [];
-  if (needsMod) parts.push(mac ? "⌘" : "Ctrl");
-  if (needsShift) parts.push(mac ? "⇧" : "Shift");
-  if (needsAlt) parts.push(mac ? "⌥" : "Alt");
+  if (needsMod) parts.push(isMac ? "⌘" : "Ctrl");
+  if (needsShift) parts.push(isMac ? "⇧" : "Shift");
+  if (needsAlt) parts.push(isMac ? "⌥" : "Alt");
   const keyDisplay = key.length === 1 ? key.toUpperCase() : key;
   parts.push(keyDisplay);
-  return parts.join(mac ? "" : "+");
+  return parts.join(isMac ? "" : "+");
 }
