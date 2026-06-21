@@ -17,7 +17,6 @@
   box-shadow: var(--shadow-lg);
   max-width: 100%;
   max-height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   animation: dialogIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);

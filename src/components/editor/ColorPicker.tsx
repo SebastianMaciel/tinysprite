@@ -234,6 +234,7 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
             onClick={resetToInitial}
             disabled={isInitial}
             data-tooltip={isInitial ? "Color anterior" : "Volver al color anterior"}
+            data-tooltip-side="top"
             aria-label={isInitial ? "Color anterior" : "Volver al color anterior"}
           />
           <span className={styles.compareArrow} aria-hidden="true">→</span>
