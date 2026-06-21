@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCombo } from "@/lib/hotkeys";
 import styles from "./Toolbar.module.css";
 
 interface Props {
@@ -8,8 +9,39 @@ interface Props {
   zoom: number;
   showGrid: boolean;
   isPanMode: boolean;
+  fitHotkey: string;
+  gridHotkey: string;
   onToggleGrid: () => void;
   onResetView: () => void;
+}
+
+interface ToolButtonProps {
+  label: string;
+  hotkey: string;
+  pressed?: boolean;
+  onClick: () => void;
+  title: string;
+}
+
+function ToolButton({ label, hotkey, pressed, onClick, title }: ToolButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${styles.button} ${pressed ? styles.buttonOn : ""}`}
+      aria-pressed={pressed}
+      aria-label={title}
+      aria-keyshortcuts={hotkey}
+    >
+      <span className={styles.buttonLabel}>{label}</span>
+      <kbd className={styles.buttonKey} aria-hidden="true">
+        {formatCombo(hotkey)}
+      </kbd>
+      <span className={styles.tooltip} role="tooltip">
+        {title}
+      </span>
+    </button>
+  );
 }
 
 export function Toolbar({
@@ -18,6 +50,8 @@ export function Toolbar({
   zoom,
   showGrid,
   isPanMode,
+  fitHotkey,
+  gridHotkey,
   onToggleGrid,
   onResetView,
 }: Props) {
@@ -38,23 +72,19 @@ export function Toolbar({
         )}
       </div>
       <div className={styles.actions}>
-        <button
-          type="button"
+        <ToolButton
+          label="fit"
+          hotkey={fitHotkey}
           onClick={onResetView}
-          className={styles.button}
           title="Fit sprite to viewport"
-        >
-          fit
-        </button>
-        <button
-          type="button"
+        />
+        <ToolButton
+          label="grid"
+          hotkey={gridHotkey}
+          pressed={showGrid}
           onClick={onToggleGrid}
-          className={`${styles.button} ${showGrid ? styles.buttonOn : ""}`}
-          aria-pressed={showGrid}
-          title="Toggle grid (visible at zoom ≥ 4×)"
-        >
-          grid
-        </button>
+          title="Toggle grid"
+        />
       </div>
     </header>
   );

@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createSprite } from "@/lib/sprite/create";
 import { useCanvasView } from "@/hooks/useCanvasView";
+import { useHotkeys } from "@/hooks/useHotkeys";
 import { Toolbar } from "./Toolbar";
 import { SpriteCanvas } from "./SpriteCanvas";
 import styles from "./Editor.module.css";
+
+const HOTKEY_FIT = "f";
+const HOTKEY_GRID = "g";
 
 export function Editor() {
   const sprite = useMemo(() => createSprite(16, 16, "scratch"), []);
@@ -23,6 +27,17 @@ export function Editor() {
     resetView,
   } = useCanvasView(sprite.width, sprite.height);
 
+  const toggleGrid = useCallback(() => setShowGrid((v) => !v), []);
+
+  const hotkeys = useMemo(
+    () => ({
+      [HOTKEY_FIT]: resetView,
+      [HOTKEY_GRID]: toggleGrid,
+    }),
+    [resetView, toggleGrid],
+  );
+  useHotkeys(hotkeys);
+
   return (
     <div className={styles.editor}>
       <Toolbar
@@ -31,7 +46,9 @@ export function Editor() {
         zoom={view.zoom}
         showGrid={showGrid}
         isPanMode={isSpaceDown && canPan}
-        onToggleGrid={() => setShowGrid((v) => !v)}
+        fitHotkey={HOTKEY_FIT}
+        gridHotkey={HOTKEY_GRID}
+        onToggleGrid={toggleGrid}
         onResetView={resetView}
       />
       <main className={styles.stage} ref={containerRef}>
