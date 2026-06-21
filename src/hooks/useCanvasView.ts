@@ -12,6 +12,7 @@ const ZOOM_LEVELS = [0.5, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64];
 const MIN_ZOOM = ZOOM_LEVELS[0];
 const MAX_ZOOM = ZOOM_LEVELS[ZOOM_LEVELS.length - 1];
 const VIEWPORT_PADDING = 32;
+const PAN_PADDING = 24;
 
 function clampZoom(z: number): number {
   return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
@@ -47,6 +48,19 @@ function computeFitView(
   };
 }
 
+function panAxisBounds(drawSize: number, containerSize: number): { min: number; max: number } {
+  const slack = containerSize - drawSize;
+  if (slack >= 2 * PAN_PADDING) {
+    return { min: PAN_PADDING, max: slack - PAN_PADDING };
+  }
+  if (slack >= 0) {
+    // No room for padding: center the sprite (range collapses to a single point).
+    return { min: slack / 2, max: slack / 2 };
+  }
+  // Sprite larger than viewport: must keep it covering the viewport entirely.
+  return { min: slack, max: 0 };
+}
+
 function clampPanForView(
   view: View,
   containerW: number,
@@ -55,19 +69,12 @@ function clampPanForView(
   spriteH: number,
 ): View {
   if (containerW === 0 || containerH === 0) return view;
-  const drawW = spriteW * view.zoom;
-  const drawH = spriteH * view.zoom;
-  // Sprite smaller than viewport: keep it fully inside [0, container - draw].
-  // Sprite larger than viewport: keep it covering the viewport entirely
-  // by clamping to [container - draw, 0] (both bounds become negative).
-  const minX = Math.min(0, containerW - drawW);
-  const maxX = Math.max(0, containerW - drawW);
-  const minY = Math.min(0, containerH - drawH);
-  const maxY = Math.max(0, containerH - drawH);
+  const x = panAxisBounds(spriteW * view.zoom, containerW);
+  const y = panAxisBounds(spriteH * view.zoom, containerH);
   return {
     zoom: view.zoom,
-    panX: Math.max(minX, Math.min(maxX, view.panX)),
-    panY: Math.max(minY, Math.min(maxY, view.panY)),
+    panX: Math.max(x.min, Math.min(x.max, view.panX)),
+    panY: Math.max(y.min, Math.min(y.max, view.panY)),
   };
 }
 
