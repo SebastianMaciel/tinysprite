@@ -126,7 +126,26 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
       });
     };
 
+  const handlePasteHex = useCallback(async () => {
+    try {
+      const raw = (await navigator.clipboard.readText()).trim();
+      const candidate = raw.startsWith("#") ? raw : `#${raw}`;
+      const parsed = parseHex(candidate);
+      if (!parsed) return;
+      const [r, g, b] = parsed;
+      const [h, s, v] = rgbToHsv(r, g, b);
+      setState({ h, s, v, r, g, b, hexInput: rgbToHexStr(r, g, b) });
+    } catch {
+      // clipboard read denied or unsupported, ignore silently
+    }
+  }, []);
+
+  const resetToInitial = useCallback(() => {
+    setState(initialState(initialColor));
+  }, [initialColor]);
+
   const initialRgb = useMemo(() => unpackColor(initialColor), [initialColor]);
+  const isInitial = state.r === initialRgb[0] && state.g === initialRgb[1] && state.b === initialRgb[2];
 
   return (
     <div className={styles.picker}>
@@ -163,15 +182,31 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
       <div className={styles.inputs}>
         <label className={styles.field}>
           <span className={styles.fieldLabel}>HEX</span>
-          <input
-            className={styles.hexInput}
-            value={state.hexInput}
-            onChange={handleHexChange}
-            onBlur={handleHexBlur}
-            spellCheck={false}
-            autoComplete="off"
-            maxLength={7}
-          />
+          <div className={styles.hexWrapper}>
+            <input
+              className={styles.hexInput}
+              value={state.hexInput}
+              onChange={handleHexChange}
+              onBlur={handleHexBlur}
+              spellCheck={false}
+              autoComplete="off"
+              maxLength={7}
+            />
+            <button
+              type="button"
+              className={styles.pasteBtn}
+              onClick={handlePasteHex}
+              title="Pegar HEX desde portapapeles"
+              aria-label="Pegar HEX desde portapapeles"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M5 1.5A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5V2h1.5A1.5 1.5 0 0 1 14 3.5v11A1.5 1.5 0 0 1 12.5 16h-9A1.5 1.5 0 0 1 2 14.5v-11A1.5 1.5 0 0 1 3.5 2H5v-.5zM6.5 1a.5.5 0 0 0-.5.5V3h4V1.5a.5.5 0 0 0-.5-.5h-3zM4 4v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4h-1v.5A.5.5 0 0 1 10.5 5h-5A.5.5 0 0 1 5 4.5V4H4z"
+                />
+              </svg>
+            </button>
+          </div>
         </label>
         <div className={styles.rgbRow}>
           {(["r", "g", "b"] as const).map((c) => (
@@ -192,10 +227,14 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
 
       <div className={styles.footer}>
         <div className={styles.compare}>
-          <span
-            className={styles.compareSwatch}
+          <button
+            type="button"
+            className={`${styles.compareSwatch} ${styles.compareSwatchBtn}`}
             style={{ background: rgbToHexStr(initialRgb[0], initialRgb[1], initialRgb[2]) }}
-            aria-label="Color anterior"
+            onClick={resetToInitial}
+            disabled={isInitial}
+            title={isInitial ? "Color anterior" : "Volver al color anterior"}
+            aria-label={isInitial ? "Color anterior" : "Volver al color anterior"}
           />
           <span className={styles.compareArrow} aria-hidden="true">→</span>
           <span
