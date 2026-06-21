@@ -49,7 +49,11 @@ function ToolButton({
       aria-keyshortcuts={hotkey}
     >
       <span className={styles.buttonLabel}>{label}</span>
-      <kbd className={styles.buttonKey} aria-hidden="true">
+      <kbd
+        className={styles.buttonKey}
+        aria-hidden="true"
+        suppressHydrationWarning
+      >
         {formatCombo(hotkey)}
       </kbd>
       <span className={styles.tooltip} role="tooltip">
