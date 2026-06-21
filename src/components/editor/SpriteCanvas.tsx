@@ -16,6 +16,18 @@ interface Props {
   canPan: boolean;
   onWheel: (dir: 1 | -1, cursorX: number, cursorY: number) => void;
   onPan: (dx: number, dy: number) => void;
+  onPaintStart: (x: number, y: number) => void;
+  onPaintMove: (fromX: number, fromY: number, toX: number, toY: number) => void;
+  onPaintEnd: () => void;
+}
+
+interface DragState {
+  pointerId: number;
+  mode: "pan" | "brush";
+  lastClientX: number;
+  lastClientY: number;
+  lastSpriteX: number;
+  lastSpriteY: number;
 }
 
 function readThemeColors() {
@@ -32,6 +44,20 @@ function readThemeColors() {
   };
 }
 
+function clientToSprite(
+  clientX: number,
+  clientY: number,
+  rect: DOMRect,
+  view: View,
+) {
+  const cssX = clientX - rect.left;
+  const cssY = clientY - rect.top;
+  return {
+    x: Math.floor((cssX - view.panX) / view.zoom),
+    y: Math.floor((cssY - view.panY) / view.zoom),
+  };
+}
+
 export function SpriteCanvas({
   sprite,
   view,
@@ -42,10 +68,14 @@ export function SpriteCanvas({
   canPan,
   onWheel,
   onPan,
+  onPaintStart,
+  onPaintMove,
+  onPaintEnd,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragStateRef = useRef<{ pointerId: number; lastX: number; lastY: number } | null>(null);
+  const [isPainting, setIsPainting] = useState(false);
+  const dragRef = useRef<DragState | null>(null);
 
   const backingCanvas = useMemo(() => {
     if (typeof document === "undefined") return null;
@@ -98,36 +128,83 @@ export function SpriteCanvas({
   }, [onWheel]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isSpaceDown || !canPan) return;
+    if (e.button !== 0) return;
+    const canvas = e.currentTarget;
+    const rect = canvas.getBoundingClientRect();
+
+    if (isSpaceDown && canPan) {
+      e.preventDefault();
+      canvas.setPointerCapture(e.pointerId);
+      dragRef.current = {
+        pointerId: e.pointerId,
+        mode: "pan",
+        lastClientX: e.clientX,
+        lastClientY: e.clientY,
+        lastSpriteX: 0,
+        lastSpriteY: 0,
+      };
+      setIsDragging(true);
+      return;
+    }
+
+    const { x, y } = clientToSprite(e.clientX, e.clientY, rect, view);
+    if (x < 0 || y < 0 || x >= sprite.width || y >= sprite.height) return;
+
     e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    dragStateRef.current = { pointerId: e.pointerId, lastX: e.clientX, lastY: e.clientY };
-    setIsDragging(true);
+    canvas.setPointerCapture(e.pointerId);
+    dragRef.current = {
+      pointerId: e.pointerId,
+      mode: "brush",
+      lastClientX: e.clientX,
+      lastClientY: e.clientY,
+      lastSpriteX: x,
+      lastSpriteY: y,
+    };
+    setIsPainting(true);
+    onPaintStart(x, y);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const drag = dragStateRef.current;
+    const drag = dragRef.current;
     if (!drag || drag.pointerId !== e.pointerId) return;
-    const dx = e.clientX - drag.lastX;
-    const dy = e.clientY - drag.lastY;
-    drag.lastX = e.clientX;
-    drag.lastY = e.clientY;
-    onPan(dx, dy);
+
+    if (drag.mode === "pan") {
+      const dx = e.clientX - drag.lastClientX;
+      const dy = e.clientY - drag.lastClientY;
+      drag.lastClientX = e.clientX;
+      drag.lastClientY = e.clientY;
+      onPan(dx, dy);
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { x, y } = clientToSprite(e.clientX, e.clientY, rect, view);
+    if (x === drag.lastSpriteX && y === drag.lastSpriteY) return;
+    onPaintMove(drag.lastSpriteX, drag.lastSpriteY, x, y);
+    drag.lastSpriteX = x;
+    drag.lastSpriteY = y;
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const drag = dragStateRef.current;
+    const drag = dragRef.current;
     if (!drag || drag.pointerId !== e.pointerId) return;
     e.currentTarget.releasePointerCapture(e.pointerId);
-    dragStateRef.current = null;
-    setIsDragging(false);
+    if (drag.mode === "brush") {
+      onPaintEnd();
+      setIsPainting(false);
+    } else {
+      setIsDragging(false);
+    }
+    dragRef.current = null;
   };
 
   const cursor = isDragging
     ? "grabbing"
     : isSpaceDown && canPan
       ? "grab"
-      : "crosshair";
+      : isPainting
+        ? "crosshair"
+        : "crosshair";
 
   return (
     <canvas

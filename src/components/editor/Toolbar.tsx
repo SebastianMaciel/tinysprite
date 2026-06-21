@@ -11,23 +11,38 @@ interface Props {
   isPanMode: boolean;
   fitHotkey: string;
   gridHotkey: string;
+  undoHotkey: string;
+  redoHotkey: string;
+  canUndo: boolean;
+  canRedo: boolean;
   onToggleGrid: () => void;
   onResetView: () => void;
+  onUndo: () => void;
+  onRedo: () => void;
 }
 
 interface ToolButtonProps {
   label: string;
   hotkey: string;
   pressed?: boolean;
+  disabled?: boolean;
   onClick: () => void;
   title: string;
 }
 
-function ToolButton({ label, hotkey, pressed, onClick, title }: ToolButtonProps) {
+function ToolButton({
+  label,
+  hotkey,
+  pressed,
+  disabled,
+  onClick,
+  title,
+}: ToolButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={`${styles.button} ${pressed ? styles.buttonOn : ""}`}
       aria-pressed={pressed}
       aria-label={title}
@@ -52,14 +67,20 @@ export function Toolbar({
   isPanMode,
   fitHotkey,
   gridHotkey,
+  undoHotkey,
+  redoHotkey,
+  canUndo,
+  canRedo,
   onToggleGrid,
   onResetView,
+  onUndo,
+  onRedo,
 }: Props) {
   return (
     <header className={styles.toolbar}>
       <div className={styles.brand}>
         <span className={styles.brandName}>TinySprite</span>
-        <span className={styles.brandTag}>milestone 2</span>
+        <span className={styles.brandTag}>milestone 3</span>
       </div>
       <div className={styles.meta}>
         <span className={styles.size}>
@@ -72,6 +93,21 @@ export function Toolbar({
         )}
       </div>
       <div className={styles.actions}>
+        <ToolButton
+          label="undo"
+          hotkey={undoHotkey}
+          disabled={!canUndo}
+          onClick={onUndo}
+          title="Deshacer último trazo"
+        />
+        <ToolButton
+          label="redo"
+          hotkey={redoHotkey}
+          disabled={!canRedo}
+          onClick={onRedo}
+          title="Rehacer trazo"
+        />
+        <span className={styles.actionsDivider} aria-hidden="true" />
         <ToolButton
           label="fit"
           hotkey={fitHotkey}
