@@ -5,6 +5,7 @@ import { useEditorStore, selectCanUndo, selectCanRedo } from "@/stores/editor";
 import { useCanvasView } from "@/hooks/useCanvasView";
 import { useHotkeys } from "@/hooks/useHotkeys";
 import { Toolbar } from "./Toolbar";
+import { Sidebar } from "./Sidebar";
 import { SpriteCanvas } from "./SpriteCanvas";
 import styles from "./Editor.module.css";
 
@@ -85,22 +86,25 @@ export function Editor() {
         onUndo={undo}
         onRedo={redo}
       />
-      <main className={styles.stage} ref={containerRef}>
-        <SpriteCanvas
-          sprite={sprite}
-          view={view}
-          dpr={dpr}
-          containerSize={containerSize}
-          showGrid={showGrid}
-          isSpaceDown={isSpaceDown}
-          canPan={canPan}
-          onWheel={zoomAtCursor}
-          onPan={panBy}
-          onPaintStart={handlePaintStart}
-          onPaintMove={handlePaintMove}
-          onPaintEnd={endStroke}
-        />
-      </main>
+      <div className={styles.body}>
+        <Sidebar onOpenPicker={() => {}} />
+        <main className={styles.stage} ref={containerRef}>
+          <SpriteCanvas
+            sprite={sprite}
+            view={view}
+            dpr={dpr}
+            containerSize={containerSize}
+            showGrid={showGrid}
+            isSpaceDown={isSpaceDown}
+            canPan={canPan}
+            onWheel={zoomAtCursor}
+            onPan={panBy}
+            onPaintStart={handlePaintStart}
+            onPaintMove={handlePaintMove}
+            onPaintEnd={endStroke}
+          />
+        </main>
+      </div>
       <footer className={styles.hint}>
         click + drag para pintar · scroll para zoom · space + drag para pan · ⌘Z para deshacer
       </footer>

@@ -7,11 +7,18 @@
   overflow: hidden;
 }
 
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
 .stage {
   flex: 1;
   min-height: 0;
   position: relative;
   background: var(--bg);
+  overflow: hidden;
 }
 
 .hint {

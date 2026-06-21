@@ -30,3 +30,14 @@ export function colorToHex(c: Color): string {
   const hex = (n: number) => n.toString(16).padStart(2, "0");
   return a === 255 ? `#${hex(r)}${hex(g)}${hex(b)}` : `#${hex(r)}${hex(g)}${hex(b)}${hex(a)}`;
 }
+
+export function colorToCss(c: Color): string {
+  const [r, g, b, a] = unpackColor(c);
+  if (a === 0) return "transparent";
+  if (a === 255) return `rgb(${r}, ${g}, ${b})`;
+  return `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(3)})`;
+}
+
+export function isTransparent(c: Color): boolean {
+  return ((c >>> 24) & 0xff) === 0;
+}
