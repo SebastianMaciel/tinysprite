@@ -22,7 +22,6 @@ export function ColorSwatch({ color, selected, onClick, label }: Props) {
       style={transparent ? undefined : { background: colorToCss(color) }}
       aria-label={accessibleLabel}
       aria-pressed={selected}
-      data-tooltip={accessibleLabel}
     />
   );
 }
