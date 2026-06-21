@@ -17,3 +17,16 @@ Beneficios:
 - Ver visualmente la evolución del sprite.
 
 Va como feature de un capítulo futuro (probablemente después del export). Idea original: Seba, 2026-06-21.
+
+## User-select: none en UI no textual
+
+Auditar todos los componentes UI no-textuales y aplicar `user-select: none`:
+
+- Toolbar (brand, meta, chips, botones)
+- Sidebar (headers de palette, hex label del color activo, botones)
+- Swatches (ya tienen pero verificar)
+- Labels de inputs (no los inputs en sí)
+- Modal header
+- Hint footer
+
+Mantener seleccionable: cualquier valor editable (inputs, textareas, contenteditable). El canvas no afecta porque es un elemento `<canvas>` (no es texto). Idea original: Seba, 2026-06-21.

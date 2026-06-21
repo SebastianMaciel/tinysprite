@@ -4,10 +4,13 @@ import { useCallback, useMemo, useState } from "react";
 import { useEditorStore, selectCanUndo, selectCanRedo } from "@/stores/editor";
 import { useCanvasView } from "@/hooks/useCanvasView";
 import { useHotkeys } from "@/hooks/useHotkeys";
+import { Modal } from "@/components/ui/Modal";
+import { ColorPicker } from "./ColorPicker";
 import { Toolbar } from "./Toolbar";
 import { Sidebar } from "./Sidebar";
 import { SpriteCanvas } from "./SpriteCanvas";
 import styles from "./Editor.module.css";
+import type { Color } from "@/types/sprite";
 
 const HOTKEY_FIT = "f";
 const HOTKEY_GRID = "g";
@@ -24,8 +27,19 @@ export function Editor() {
   const redo = useEditorStore((s) => s.redo);
   const canUndo = useEditorStore(selectCanUndo);
   const canRedo = useEditorStore(selectCanRedo);
+  const activeColor = useEditorStore((s) => s.activeColor);
+  const addCustomColor = useEditorStore((s) => s.addCustomColor);
 
   const [showGrid, setShowGrid] = useState(true);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const handleApplyColor = useCallback(
+    (c: Color) => {
+      addCustomColor(c);
+      setPickerOpen(false);
+    },
+    [addCustomColor],
+  );
 
   const {
     containerRef,
@@ -87,7 +101,7 @@ export function Editor() {
         onRedo={redo}
       />
       <div className={styles.body}>
-        <Sidebar onOpenPicker={() => {}} />
+        <Sidebar onOpenPicker={() => setPickerOpen(true)} />
         <main className={styles.stage} ref={containerRef}>
           <SpriteCanvas
             sprite={sprite}
@@ -108,6 +122,17 @@ export function Editor() {
       <footer className={styles.hint}>
         click + drag para pintar · scroll para zoom · space + drag para pan · ⌘Z para deshacer
       </footer>
+      <Modal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        title="Nuevo color"
+      >
+        <ColorPicker
+          initialColor={activeColor}
+          onApply={handleApplyColor}
+          onCancel={() => setPickerOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }
