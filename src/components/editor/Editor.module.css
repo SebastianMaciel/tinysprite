@@ -1,0 +1,26 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--bg);
+}
+
+.hint {
+  flex-shrink: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  color: var(--text-subtle);
+  letter-spacing: 0.02em;
+}
