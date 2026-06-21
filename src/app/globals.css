@@ -88,6 +88,21 @@ button {
   transform: translate(-50%, 2px);
 }
 
+[data-tooltip][data-tooltip-side="right"]::after {
+  top: 50%;
+  left: calc(100% + 8px);
+  bottom: auto;
+  transform: translate(-2px, -50%);
+}
+
+[data-tooltip][data-tooltip-side="left"]::after {
+  top: 50%;
+  left: auto;
+  right: calc(100% + 8px);
+  bottom: auto;
+  transform: translate(2px, -50%);
+}
+
 [data-tooltip][data-tooltip-align="right"]::after {
   left: auto;
   right: 0;
@@ -103,6 +118,13 @@ button {
 [data-tooltip][data-tooltip-side="top"]:hover::after,
 [data-tooltip][data-tooltip-side="top"]:focus-visible::after {
   transform: translate(-50%, 0);
+}
+
+[data-tooltip][data-tooltip-side="right"]:hover::after,
+[data-tooltip][data-tooltip-side="right"]:focus-visible::after,
+[data-tooltip][data-tooltip-side="left"]:hover::after,
+[data-tooltip][data-tooltip-side="left"]:focus-visible::after {
+  transform: translate(0, -50%);
 }
 
 [data-tooltip][data-tooltip-align="right"]:hover::after,

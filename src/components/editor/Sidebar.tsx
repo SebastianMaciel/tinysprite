@@ -21,57 +21,59 @@ export function Sidebar({ onOpenPicker }: Props) {
 
   return (
     <aside className={styles.sidebar} aria-label="Paleta">
-      <div className={styles.active}>
-        <div
-          className={`${styles.activeSwatch} ${activeTransparent ? styles.activeTransparent : ""}`}
-          style={activeTransparent ? undefined : { background: colorToCss(activeColor) }}
-          aria-hidden="true"
-        />
-        <code className={styles.activeHex}>{activeHex}</code>
-      </div>
-
-      <section className={styles.section}>
-        <div className={styles.grid}>
-          <ColorSwatch
-            color={TRANSPARENT}
-            selected={activeTransparent}
-            onClick={() => setActiveColor(TRANSPARENT)}
-            label="Transparente (borrar)"
+      <div className={styles.scroll}>
+        <div className={styles.active}>
+          <div
+            className={`${styles.activeSwatch} ${activeTransparent ? styles.activeTransparent : ""}`}
+            style={activeTransparent ? undefined : { background: colorToCss(activeColor) }}
+            aria-hidden="true"
           />
+          <code className={styles.activeHex}>{activeHex}</code>
         </div>
-      </section>
 
-      {palettes.map((palette) => (
-        <section key={palette.id} className={styles.section}>
-          <header className={styles.sectionHeader}>{palette.name}</header>
-          <div className={styles.grid}>
-            {palette.colors.map((c, i) => (
-              <ColorSwatch
-                key={`${palette.id}-${i}`}
-                color={c}
-                selected={c === activeColor}
-                onClick={() => setActiveColor(c)}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-
-      {customColors.length > 0 && (
         <section className={styles.section}>
-          <header className={styles.sectionHeader}>custom</header>
           <div className={styles.grid}>
-            {customColors.map((c, i) => (
-              <ColorSwatch
-                key={`custom-${i}`}
-                color={c}
-                selected={c === activeColor}
-                onClick={() => setActiveColor(c)}
-              />
-            ))}
+            <ColorSwatch
+              color={TRANSPARENT}
+              selected={activeTransparent}
+              onClick={() => setActiveColor(TRANSPARENT)}
+              label="Transparente (borrar)"
+            />
           </div>
         </section>
-      )}
+
+        {palettes.map((palette) => (
+          <section key={palette.id} className={styles.section}>
+            <header className={styles.sectionHeader}>{palette.name}</header>
+            <div className={styles.grid}>
+              {palette.colors.map((c, i) => (
+                <ColorSwatch
+                  key={`${palette.id}-${i}`}
+                  color={c}
+                  selected={c === activeColor}
+                  onClick={() => setActiveColor(c)}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {customColors.length > 0 && (
+          <section className={styles.section}>
+            <header className={styles.sectionHeader}>custom</header>
+            <div className={styles.grid}>
+              {customColors.map((c, i) => (
+                <ColorSwatch
+                  key={`custom-${i}`}
+                  color={c}
+                  selected={c === activeColor}
+                  onClick={() => setActiveColor(c)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
 
       <footer className={styles.footer}>
         <button
@@ -80,6 +82,7 @@ export function Sidebar({ onOpenPicker }: Props) {
           onClick={onOpenPicker}
           aria-label="Agregar color custom"
           data-tooltip="Agregar color custom"
+          data-tooltip-side="right"
         >
           +
         </button>
