@@ -7,6 +7,7 @@ interface Props {
   spriteHeight: number;
   zoom: number;
   showGrid: boolean;
+  isPanMode: boolean;
   onToggleGrid: () => void;
   onResetView: () => void;
 }
@@ -16,6 +17,7 @@ export function Toolbar({
   spriteHeight,
   zoom,
   showGrid,
+  isPanMode,
   onToggleGrid,
   onResetView,
 }: Props) {
@@ -31,6 +33,9 @@ export function Toolbar({
         </span>
         <span className={styles.divider} aria-hidden="true">·</span>
         <span className={styles.zoom}>{Math.round(zoom * 100)}%</span>
+        {isPanMode && (
+          <span className={styles.modeChip} aria-live="polite">PAN</span>
+        )}
       </div>
       <div className={styles.actions}>
         <button

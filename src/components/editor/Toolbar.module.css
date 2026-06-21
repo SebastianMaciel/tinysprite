@@ -90,3 +90,15 @@
 .buttonOn:hover {
   background: var(--accent-hover);
 }
+
+.modeChip {
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-left: var(--space-2);
+}

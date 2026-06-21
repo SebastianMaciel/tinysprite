@@ -29,6 +29,7 @@ export function Editor() {
         spriteHeight={sprite.height}
         zoom={view.zoom}
         showGrid={showGrid}
+        isPanMode={isSpaceDown}
         onToggleGrid={() => setShowGrid((v) => !v)}
         onResetView={resetView}
       />
