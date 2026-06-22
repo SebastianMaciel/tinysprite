@@ -14,12 +14,14 @@ interface Props {
   gridHotkey: string;
   undoHotkey: string;
   redoHotkey: string;
+  newHotkey: string;
   canUndo: boolean;
   canRedo: boolean;
   onToggleGrid: () => void;
   onResetView: () => void;
   onUndo: () => void;
   onRedo: () => void;
+  onNew: () => void;
 }
 
 interface ToolButtonProps {
@@ -70,12 +72,14 @@ export function Toolbar({
   gridHotkey,
   undoHotkey,
   redoHotkey,
+  newHotkey,
   canUndo,
   canRedo,
   onToggleGrid,
   onResetView,
   onUndo,
   onRedo,
+  onNew,
 }: Props) {
   return (
     <header className={styles.toolbar}>
@@ -94,6 +98,13 @@ export function Toolbar({
         )}
       </div>
       <div className={styles.actions}>
+        <ToolButton
+          label="new"
+          hotkey={newHotkey}
+          onClick={onNew}
+          title="Nuevo sprite"
+        />
+        <span className={styles.actionsDivider} aria-hidden="true" />
         <ToolButton
           label="undo"
           hotkey={undoHotkey}

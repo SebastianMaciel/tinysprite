@@ -6,6 +6,7 @@ import { useCanvasView } from "@/hooks/useCanvasView";
 import { useHotkeys } from "@/hooks/useHotkeys";
 import { Modal } from "@/components/ui/Modal";
 import { ColorPicker } from "./ColorPicker";
+import { NewSpriteModal } from "./NewSpriteModal";
 import { Toolbar } from "./Toolbar";
 import { Sidebar } from "./Sidebar";
 import { SpriteCanvas } from "./SpriteCanvas";
@@ -16,6 +17,7 @@ const HOTKEY_FIT = "f";
 const HOTKEY_GRID = "g";
 const HOTKEY_UNDO = "mod+z";
 const HOTKEY_REDO = "mod+shift+z";
+const HOTKEY_NEW = "mod+alt+n";
 
 export function Editor() {
   const sprite = useEditorStore((s) => s.sprite);
@@ -29,6 +31,7 @@ export function Editor() {
   const canRedo = useEditorStore(selectCanRedo);
   const activeColor = useEditorStore((s) => s.activeColor);
   const addCustomColor = useEditorStore((s) => s.addCustomColor);
+  const newSprite = useEditorStore((s) => s.newSprite);
   const hydrateFromStorage = useEditorStore((s) => s.hydrateFromStorage);
 
   useEffect(() => {
@@ -37,6 +40,7 @@ export function Editor() {
 
   const [showGrid, setShowGrid] = useState(true);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
 
   const handleApplyColor = useCallback(
     (c: Color) => {
@@ -45,6 +49,16 @@ export function Editor() {
     },
     [addCustomColor],
   );
+
+  const handleCreateSprite = useCallback(
+    (w: number, h: number, name: string) => {
+      newSprite(w, h, name);
+      setNewOpen(false);
+    },
+    [newSprite],
+  );
+
+  const openNewModal = useCallback(() => setNewOpen(true), []);
 
   const {
     containerRef,
@@ -81,8 +95,9 @@ export function Editor() {
       [HOTKEY_GRID]: toggleGrid,
       [HOTKEY_UNDO]: undo,
       [HOTKEY_REDO]: redo,
+      [HOTKEY_NEW]: openNewModal,
     }),
-    [resetView, toggleGrid, undo, redo],
+    [resetView, toggleGrid, undo, redo, openNewModal],
   );
   useHotkeys(hotkeys);
 
@@ -98,12 +113,14 @@ export function Editor() {
         gridHotkey={HOTKEY_GRID}
         undoHotkey={HOTKEY_UNDO}
         redoHotkey={HOTKEY_REDO}
+        newHotkey={HOTKEY_NEW}
         canUndo={canUndo}
         canRedo={canRedo}
         onToggleGrid={toggleGrid}
         onResetView={resetView}
         onUndo={undo}
         onRedo={redo}
+        onNew={openNewModal}
       />
       <div className={styles.body}>
         <Sidebar onOpenPicker={() => setPickerOpen(true)} />
@@ -138,6 +155,11 @@ export function Editor() {
           onCancel={() => setPickerOpen(false)}
         />
       </Modal>
+      <NewSpriteModal
+        open={newOpen}
+        onClose={() => setNewOpen(false)}
+        onCreate={handleCreateSprite}
+      />
     </div>
   );
 }
