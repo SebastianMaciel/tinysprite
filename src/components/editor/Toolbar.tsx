@@ -15,6 +15,7 @@ interface Props {
   undoHotkey: string;
   redoHotkey: string;
   newHotkey: string;
+  exportHotkey: string;
   canUndo: boolean;
   canRedo: boolean;
   onToggleGrid: () => void;
@@ -22,6 +23,7 @@ interface Props {
   onUndo: () => void;
   onRedo: () => void;
   onNew: () => void;
+  onExport: () => void;
 }
 
 interface ToolButtonProps {
@@ -73,6 +75,7 @@ export function Toolbar({
   undoHotkey,
   redoHotkey,
   newHotkey,
+  exportHotkey,
   canUndo,
   canRedo,
   onToggleGrid,
@@ -80,6 +83,7 @@ export function Toolbar({
   onUndo,
   onRedo,
   onNew,
+  onExport,
 }: Props) {
   return (
     <header className={styles.toolbar}>
@@ -103,6 +107,12 @@ export function Toolbar({
           hotkey={newHotkey}
           onClick={onNew}
           title="Nuevo sprite"
+        />
+        <ToolButton
+          label="export"
+          hotkey={exportHotkey}
+          onClick={onExport}
+          title="Exportar sprite"
         />
         <span className={styles.actionsDivider} aria-hidden="true" />
         <ToolButton

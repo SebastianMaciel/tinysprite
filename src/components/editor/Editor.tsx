@@ -6,6 +6,7 @@ import { useCanvasView } from "@/hooks/useCanvasView";
 import { useHotkeys } from "@/hooks/useHotkeys";
 import { Modal } from "@/components/ui/Modal";
 import { ColorPicker } from "./ColorPicker";
+import { ExportModal } from "./ExportModal";
 import { NewSpriteModal } from "./NewSpriteModal";
 import { Toolbar } from "./Toolbar";
 import { Sidebar } from "./Sidebar";
@@ -18,6 +19,7 @@ const HOTKEY_GRID = "g";
 const HOTKEY_UNDO = "mod+z";
 const HOTKEY_REDO = "mod+shift+z";
 const HOTKEY_NEW = "mod+alt+n";
+const HOTKEY_EXPORT = "mod+e";
 
 export function Editor() {
   const sprite = useEditorStore((s) => s.sprite);
@@ -41,6 +43,7 @@ export function Editor() {
   const [showGrid, setShowGrid] = useState(true);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const handleApplyColor = useCallback(
     (c: Color) => {
@@ -59,6 +62,7 @@ export function Editor() {
   );
 
   const openNewModal = useCallback(() => setNewOpen(true), []);
+  const openExportModal = useCallback(() => setExportOpen(true), []);
 
   const {
     containerRef,
@@ -96,8 +100,9 @@ export function Editor() {
       [HOTKEY_UNDO]: undo,
       [HOTKEY_REDO]: redo,
       [HOTKEY_NEW]: openNewModal,
+      [HOTKEY_EXPORT]: openExportModal,
     }),
-    [resetView, toggleGrid, undo, redo, openNewModal],
+    [resetView, toggleGrid, undo, redo, openNewModal, openExportModal],
   );
   useHotkeys(hotkeys);
 
@@ -114,6 +119,7 @@ export function Editor() {
         undoHotkey={HOTKEY_UNDO}
         redoHotkey={HOTKEY_REDO}
         newHotkey={HOTKEY_NEW}
+        exportHotkey={HOTKEY_EXPORT}
         canUndo={canUndo}
         canRedo={canRedo}
         onToggleGrid={toggleGrid}
@@ -121,6 +127,7 @@ export function Editor() {
         onUndo={undo}
         onRedo={redo}
         onNew={openNewModal}
+        onExport={openExportModal}
       />
       <div className={styles.body}>
         <Sidebar onOpenPicker={() => setPickerOpen(true)} />
@@ -159,6 +166,11 @@ export function Editor() {
         open={newOpen}
         onClose={() => setNewOpen(false)}
         onCreate={handleCreateSprite}
+      />
+      <ExportModal
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        sprite={sprite}
       />
     </div>
   );
