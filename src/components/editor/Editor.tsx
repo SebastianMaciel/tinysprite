@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore, selectCanUndo, selectCanRedo } from "@/stores/editor";
 import { useCanvasView } from "@/hooks/useCanvasView";
 import { useHotkeys } from "@/hooks/useHotkeys";
@@ -29,6 +29,11 @@ export function Editor() {
   const canRedo = useEditorStore(selectCanRedo);
   const activeColor = useEditorStore((s) => s.activeColor);
   const addCustomColor = useEditorStore((s) => s.addCustomColor);
+  const hydrateFromStorage = useEditorStore((s) => s.hydrateFromStorage);
+
+  useEffect(() => {
+    hydrateFromStorage();
+  }, [hydrateFromStorage]);
 
   const [showGrid, setShowGrid] = useState(true);
   const [pickerOpen, setPickerOpen] = useState(false);

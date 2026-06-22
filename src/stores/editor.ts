@@ -12,8 +12,15 @@ import {
   DEFAULT_PALETTES,
   type NamedPalette,
 } from "@/lib/sprite/palettes";
+import {
+  SERIALIZATION_VERSION,
+  deserializeSprite,
+  serializeSprite,
+} from "@/lib/sprite/serialize";
+import { loadEditorState, saveEditorState } from "@/lib/storage/local";
 
 const HISTORY_LIMIT = 100;
+const SAVE_DEBOUNCE_MS = 250;
 
 export interface EditorState {
   sprite: Sprite;
@@ -24,6 +31,7 @@ export interface EditorState {
   historyIndex: number;
   strokeActive: boolean;
   strokeDirty: boolean;
+  hydrated: boolean;
 
   setActiveColor: (c: Color) => void;
   addCustomColor: (c: Color) => void;
@@ -33,9 +41,11 @@ export interface EditorState {
   paintFromTo: (x0: number, y0: number, x1: number, y1: number) => void;
   undo: () => void;
   redo: () => void;
+  newSprite: (width: number, height: number, name?: string) => void;
+  hydrateFromStorage: () => void;
 }
 
-function initialState() {
+function freshState() {
   const sprite = createSprite(16, 16, "scratch");
   const initialPixels = new Uint32Array(activeFrame(sprite).layers[0].pixels);
   return {
@@ -47,11 +57,12 @@ function initialState() {
     historyIndex: 0,
     strokeActive: false,
     strokeDirty: false,
+    hydrated: false,
   };
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
-  ...initialState(),
+  ...freshState(),
 
   setActiveColor: (c) => set({ activeColor: c }),
 
@@ -119,8 +130,58 @@ export const useEditorStore = create<EditorState>((set) => ({
       layer.pixels.set(s.history[idx]);
       return { historyIndex: idx, sprite: { ...s.sprite } };
     }),
+
+  newSprite: (width, height, name) =>
+    set(() => {
+      const sprite = createSprite(width, height, name ?? "untitled");
+      const initialPixels = new Uint32Array(activeFrame(sprite).layers[0].pixels);
+      return {
+        sprite,
+        history: [initialPixels],
+        historyIndex: 0,
+        strokeActive: false,
+        strokeDirty: false,
+      };
+    }),
+
+  hydrateFromStorage: () =>
+    set((s) => {
+      if (s.hydrated) return {};
+      const saved = loadEditorState();
+      if (!saved) return { hydrated: true };
+      const sprite = deserializeSprite(saved.sprite);
+      if (!sprite) return { hydrated: true };
+      const initialPixels = new Uint32Array(activeFrame(sprite).layers[0].pixels);
+      return {
+        sprite,
+        customColors: Array.isArray(saved.customColors) ? saved.customColors : [],
+        activeColor:
+          typeof saved.activeColor === "number"
+            ? saved.activeColor
+            : DEFAULT_ACTIVE_COLOR,
+        history: [initialPixels],
+        historyIndex: 0,
+        hydrated: true,
+      };
+    }),
 }));
 
 export const selectCanUndo = (s: EditorState) => s.historyIndex > 0;
 export const selectCanRedo = (s: EditorState) =>
   s.historyIndex < s.history.length - 1;
+
+if (typeof window !== "undefined") {
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  useEditorStore.subscribe((state) => {
+    if (!state.hydrated) return;
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveEditorState({
+        v: SERIALIZATION_VERSION,
+        sprite: serializeSprite(state.sprite),
+        customColors: state.customColors,
+        activeColor: state.activeColor,
+      });
+    }, SAVE_DEBOUNCE_MS);
+  });
+}
