@@ -5,6 +5,15 @@
   height: 100vh;
   background: var(--bg);
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.editor input,
+.editor textarea,
+.editor [contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .body {
