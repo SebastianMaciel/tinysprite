@@ -80,6 +80,17 @@ export function HistoryTimeline() {
 
   const [isOpen, setIsOpen] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timelineRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const container = timelineRef.current;
+    if (!container) return;
+    const target = container.querySelector<HTMLElement>(`.${styles.active}`);
+    if (target) {
+      target.scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" });
+    }
+  }, [isOpen, historyIndex]);
 
   const cancelClose = useCallback(() => {
     if (closeTimerRef.current) {
@@ -121,6 +132,7 @@ export function HistoryTimeline() {
         time travel
       </button>
       <nav
+        ref={timelineRef}
         id="history-timeline"
         className={`${styles.timeline} ${isOpen ? styles.timelineOpen : ""}`}
         aria-label="History timeline"

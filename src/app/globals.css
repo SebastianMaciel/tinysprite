@@ -52,6 +52,39 @@ button {
   color: var(--accent-fg);
 }
 
+/* Themed scrollbars. Firefox uses the standard properties, WebKit/Blink
+   uses the pseudo-elements. Both target the same cozy palette so any
+   scrollable area picks them up automatically. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* Custom tooltip pattern — apply data-tooltip="text" to any element.
    Optional: data-tooltip-side="top" to flip above (default below).
             data-tooltip-align="right" to right-anchor instead of center.
