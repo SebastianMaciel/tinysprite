@@ -64,7 +64,7 @@ export function Modal({ open, onClose, title, children, initialFocusRef }: Props
             type="button"
             onClick={onClose}
             className={styles.close}
-            aria-label="Cerrar"
+            aria-label="Close"
           >
             ×
           </button>

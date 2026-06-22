@@ -111,10 +111,10 @@ export function ExportModal({ open, onClose, sprite }: Props) {
   const outputHeight = sprite.height * (scalable ? scale : 1);
 
   return (
-    <Modal open={open} onClose={onClose} title="Exportar sprite">
+    <Modal open={open} onClose={onClose} title="Export sprite">
       <form className={styles.form} onSubmit={handleExport}>
         <section className={styles.section}>
-          <label className={styles.label}>Formato</label>
+          <label className={styles.label}>Format</label>
           <div className={styles.formats}>
             {(Object.keys(FORMAT_LABELS) as Format[]).map((f) => (
               <button
@@ -132,7 +132,7 @@ export function ExportModal({ open, onClose, sprite }: Props) {
 
         {scalable && (
           <section className={styles.section}>
-            <label className={styles.label}>Escala</label>
+            <label className={styles.label}>Scale</label>
             <div className={styles.scales}>
               {SCALES.map((s) => (
                 <button
@@ -151,7 +151,7 @@ export function ExportModal({ open, onClose, sprite }: Props) {
 
         <section className={styles.section}>
           <label className={styles.label} htmlFor="export-filename">
-            Nombre del archivo
+            Filename
           </label>
           <input
             id="export-filename"
@@ -166,7 +166,7 @@ export function ExportModal({ open, onClose, sprite }: Props) {
 
         <div className={styles.footer}>
           <p className={styles.info}>
-            salida: {outputWidth} × {outputHeight} px
+            output: {outputWidth} × {outputHeight} px
           </p>
           <div className={styles.buttons}>
             <button
@@ -175,14 +175,14 @@ export function ExportModal({ open, onClose, sprite }: Props) {
               onClick={onClose}
               disabled={exporting}
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="submit"
               className={`${styles.btn} ${styles.btnPrimary}`}
               disabled={exporting}
             >
-              {exporting ? "Descargando…" : "Descargar"}
+              {exporting ? "Downloading…" : "Download"}
             </button>
           </div>
         </div>

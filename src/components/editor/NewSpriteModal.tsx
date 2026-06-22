@@ -38,10 +38,10 @@ export function NewSpriteModal({ open, onClose, onCreate }: Props) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Nuevo sprite">
+    <Modal open={open} onClose={onClose} title="New sprite">
       <form className={styles.form} onSubmit={handleSubmit}>
         <section className={styles.section}>
-          <label className={styles.label}>Tamaño</label>
+          <label className={styles.label}>Size</label>
           <div className={styles.presets}>
             {SIZE_PRESETS.map((p) => (
               <button
@@ -84,12 +84,12 @@ export function NewSpriteModal({ open, onClose, onCreate }: Props) {
               />
             </label>
           </div>
-          <p className={styles.hint}>máx {MAX_SPRITE_SIZE} por lado.</p>
+          <p className={styles.hint}>max {MAX_SPRITE_SIZE} per side.</p>
         </section>
 
         <section className={styles.section}>
           <label className={styles.label} htmlFor="new-sprite-name">
-            Nombre
+            Name
           </label>
           <input
             id="new-sprite-name"
@@ -106,7 +106,7 @@ export function NewSpriteModal({ open, onClose, onCreate }: Props) {
 
         <div className={styles.footer}>
           <p className={styles.warning}>
-            esto reemplaza el sprite actual sin pedir confirmación.
+            this replaces the current sprite without confirmation.
           </p>
           <div className={styles.buttons}>
             <button
@@ -114,10 +114,10 @@ export function NewSpriteModal({ open, onClose, onCreate }: Props) {
               className={`${styles.btn} ${styles.btnGhost}`}
               onClick={onClose}
             >
-              Cancelar
+              Cancel
             </button>
             <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
-              Crear
+              Create
             </button>
           </div>
         </div>

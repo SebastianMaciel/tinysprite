@@ -149,12 +149,12 @@ export function Editor() {
         </main>
       </div>
       <footer className={styles.hint}>
-        click + drag para pintar · scroll para zoom · space + drag para pan · hover los botones para ver atajos
+        click + drag to paint · scroll to zoom · space + drag to pan · hover buttons for shortcuts
       </footer>
       <Modal
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        title="Nuevo color"
+        title="New color"
       >
         <ColorPicker
           initialColor={activeColor}

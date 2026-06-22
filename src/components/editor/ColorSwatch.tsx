@@ -13,7 +13,7 @@ interface Props {
 
 export function ColorSwatch({ color, selected, onClick, label }: Props) {
   const transparent = isTransparent(color);
-  const accessibleLabel = label ?? (transparent ? "Transparente" : colorToHex(color));
+  const accessibleLabel = label ?? (transparent ? "Transparent" : colorToHex(color));
   return (
     <button
       type="button"

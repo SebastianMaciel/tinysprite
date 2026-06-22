@@ -106,13 +106,13 @@ export function Toolbar({
           label="new"
           hotkey={newHotkey}
           onClick={onNew}
-          title="Nuevo sprite"
+          title="New sprite"
         />
         <ToolButton
           label="export"
           hotkey={exportHotkey}
           onClick={onExport}
-          title="Exportar sprite"
+          title="Export sprite"
         />
         <span className={styles.actionsDivider} aria-hidden="true" />
         <ToolButton
@@ -120,28 +120,28 @@ export function Toolbar({
           hotkey={undoHotkey}
           disabled={!canUndo}
           onClick={onUndo}
-          title="Deshacer último trazo"
+          title="Undo last stroke"
         />
         <ToolButton
           label="redo"
           hotkey={redoHotkey}
           disabled={!canRedo}
           onClick={onRedo}
-          title="Rehacer trazo"
+          title="Redo stroke"
         />
         <span className={styles.actionsDivider} aria-hidden="true" />
         <ToolButton
           label="fit"
           hotkey={fitHotkey}
           onClick={onResetView}
-          title="Fit sprite to viewport"
+          title="Fit to viewport"
         />
         <ToolButton
           label="grid"
           hotkey={gridHotkey}
           pressed={showGrid}
           onClick={onToggleGrid}
-          title="Toggle grid"
+          title="Grid toggle"
         />
         <span className={styles.actionsDivider} aria-hidden="true" />
         <ThemeToggle />

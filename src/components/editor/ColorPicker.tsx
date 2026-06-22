@@ -196,8 +196,8 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
               type="button"
               className={styles.pasteBtn}
               onClick={handlePasteHex}
-              data-tooltip="Pegar desde portapapeles"
-              aria-label="Pegar desde portapapeles"
+              data-tooltip="Paste from clipboard"
+              aria-label="Paste from clipboard"
             >
               <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
                 <path
@@ -233,15 +233,15 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
             style={{ background: rgbToHexStr(initialRgb[0], initialRgb[1], initialRgb[2]) }}
             onClick={resetToInitial}
             disabled={isInitial}
-            data-tooltip={isInitial ? "Color anterior" : "Volver al color anterior"}
+            data-tooltip={isInitial ? "Previous color" : "Reset to previous color"}
             data-tooltip-side="top"
-            aria-label={isInitial ? "Color anterior" : "Volver al color anterior"}
+            aria-label={isInitial ? "Previous color" : "Reset to previous color"}
           />
           <span className={styles.compareArrow} aria-hidden="true">→</span>
           <span
             className={styles.compareSwatch}
             style={{ background: currentHex }}
-            aria-label="Color nuevo"
+            aria-label="New color"
           />
         </div>
         <div className={styles.buttons}>
@@ -250,14 +250,14 @@ export function ColorPicker({ initialColor, onApply, onCancel }: Props) {
             className={`${styles.btn} ${styles.btnGhost}`}
             onClick={onCancel}
           >
-            Cancelar
+            Cancel
           </button>
           <button
             type="button"
             className={`${styles.btn} ${styles.btnPrimary}`}
             onClick={() => onApply(currentColor)}
           >
-            Aplicar
+            Apply
           </button>
         </div>
       </div>

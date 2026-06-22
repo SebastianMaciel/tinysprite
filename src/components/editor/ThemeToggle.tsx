@@ -40,14 +40,14 @@ function MoonIcon() {
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
-  const label = isDark ? "Cambiar a tema claro" : "Cambiar a tema oscuro";
+  const label = isDark ? "Switch to light theme" : "Switch to dark theme";
   return (
     <button
       type="button"
       className={styles.toggle}
       onClick={toggleTheme}
       aria-label={label}
-      data-tooltip={isDark ? "Tema claro" : "Tema oscuro"}
+      data-tooltip={isDark ? "Light theme" : "Dark theme"}
       data-tooltip-align="right"
       suppressHydrationWarning
     >

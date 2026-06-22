@@ -20,7 +20,7 @@ export function Sidebar({ onOpenPicker }: Props) {
   const activeHex = activeTransparent ? "TRANSP" : colorToHex(activeColor).toUpperCase();
 
   return (
-    <aside className={styles.sidebar} aria-label="Paleta">
+    <aside className={styles.sidebar} aria-label="Palette">
       <div className={styles.scroll}>
         <div className={styles.active}>
           <div
@@ -37,7 +37,7 @@ export function Sidebar({ onOpenPicker }: Props) {
               color={TRANSPARENT}
               selected={activeTransparent}
               onClick={() => setActiveColor(TRANSPARENT)}
-              label="Transparente (borrar)"
+              label="Transparent (eraser)"
             />
           </div>
         </section>
@@ -80,8 +80,8 @@ export function Sidebar({ onOpenPicker }: Props) {
           type="button"
           className={styles.addBtn}
           onClick={onOpenPicker}
-          aria-label="Agregar color custom"
-          data-tooltip="Agregar color custom"
+          aria-label="Add custom color"
+          data-tooltip="Add custom color"
           data-tooltip-side="right"
         >
           +
