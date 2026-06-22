@@ -81,10 +81,6 @@ pnpm lint       # eslint
 
 A husky pre-commit hook runs `pnpm build && pnpm exec tsc --noEmit` so broken builds never reach the history.
 
-## Roadmap
-
-See [`BACKLOG.md`](./BACKLOG.md) for ideas parked for future iterations: floating history timeline with thumbnails, multi-frame animation, layers, more export formats.
-
 ## How it was built
 
 Documented chapter-by-chapter on a Spanish-language blog where I walk through the actual conversations with Claude Code: idea, canvas, tools and state, persistence, export, polish and deploy. Each chapter has the commits, the tradeoffs and the screenshots.
