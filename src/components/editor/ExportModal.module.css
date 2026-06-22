@@ -62,6 +62,17 @@
   background: var(--accent-hover);
 }
 
+.formatBtn:disabled,
+.scaleBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.formatBtn:disabled:hover,
+.scaleBtn:disabled:hover {
+  background: var(--surface-alt);
+}
+
 .scales {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

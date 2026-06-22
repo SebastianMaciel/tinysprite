@@ -25,6 +25,10 @@ const FORMAT_LABELS: Record<Format, string> = {
   sheet: "Sheet",
 };
 
+const DISABLED_FORMATS: Partial<Record<Format, string>> = {
+  sheet: "Unlocks with animation frames",
+};
+
 const SCALES = [1, 2, 4, 8] as const;
 
 function slugify(name: string): string {
@@ -116,17 +120,23 @@ export function ExportModal({ open, onClose, sprite }: Props) {
         <section className={styles.section}>
           <label className={styles.label}>Format</label>
           <div className={styles.formats}>
-            {(Object.keys(FORMAT_LABELS) as Format[]).map((f) => (
-              <button
-                key={f}
-                type="button"
-                className={`${styles.formatBtn} ${format === f ? styles.formatBtnOn : ""}`}
-                onClick={() => changeFormat(f)}
-                aria-pressed={format === f}
-              >
-                {FORMAT_LABELS[f]}
-              </button>
-            ))}
+            {(Object.keys(FORMAT_LABELS) as Format[]).map((f) => {
+              const disabledReason = DISABLED_FORMATS[f];
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  className={`${styles.formatBtn} ${format === f ? styles.formatBtnOn : ""}`}
+                  onClick={() => changeFormat(f)}
+                  aria-pressed={format === f}
+                  disabled={Boolean(disabledReason)}
+                  data-tooltip={disabledReason}
+                  data-tooltip-side={disabledReason ? "top" : undefined}
+                >
+                  {FORMAT_LABELS[f]}
+                </button>
+              );
+            })}
           </div>
         </section>
 
