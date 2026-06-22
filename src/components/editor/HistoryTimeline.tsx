@@ -7,6 +7,7 @@ import styles from "./HistoryTimeline.module.css";
 const CLOSE_DELAY_MS = 2000;
 
 interface ThumbProps {
+  index: number;
   pixels: Uint32Array;
   width: number;
   height: number;
@@ -14,11 +15,12 @@ interface ThumbProps {
   previewing: boolean;
   label: string;
   onClick: () => void;
-  onHoverIn: () => void;
-  onHoverOut: () => void;
+  onFocusPreview: () => void;
+  onBlurPreview: () => void;
 }
 
 function HistoryThumb({
+  index,
   pixels,
   width,
   height,
@@ -26,8 +28,8 @@ function HistoryThumb({
   previewing,
   label,
   onClick,
-  onHoverIn,
-  onHoverOut,
+  onFocusPreview,
+  onBlurPreview,
 }: ThumbProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -55,12 +57,11 @@ function HistoryThumb({
   return (
     <button
       type="button"
+      data-thumb-index={index}
       className={`${styles.thumb} ${stateClass}`}
       onClick={onClick}
-      onMouseEnter={onHoverIn}
-      onMouseLeave={onHoverOut}
-      onFocus={onHoverIn}
-      onBlur={onHoverOut}
+      onFocus={onFocusPreview}
+      onBlur={onBlurPreview}
       aria-label={label}
       aria-pressed={active}
     >
@@ -115,6 +116,30 @@ export function HistoryTimeline() {
 
   useEffect(() => () => cancelClose(), [cancelClose]);
 
+  const handleTimelineMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      const target = e.target as HTMLElement | null;
+      const thumbEl = target?.closest<HTMLElement>("[data-thumb-index]");
+      if (!thumbEl) return;
+      const raw = thumbEl.dataset.thumbIndex;
+      if (raw === undefined) return;
+      const idx = Number(raw);
+      if (Number.isNaN(idx)) return;
+      if (idx === historyIndex) {
+        if (previewIndex !== null) setPreviewIndex(null);
+        return;
+      }
+      if (idx === previewIndex) return;
+      setPreviewIndex(idx);
+    },
+    [historyIndex, previewIndex, setPreviewIndex],
+  );
+
+  const handleTimelineMouseLeave = useCallback(() => {
+    setPreviewIndex(null);
+    scheduleClose();
+  }, [setPreviewIndex, scheduleClose]);
+
   if (history.length <= 1) return null;
 
   return (
@@ -137,11 +162,13 @@ export function HistoryTimeline() {
         className={`${styles.timeline} ${isOpen ? styles.timelineOpen : ""}`}
         aria-label="History timeline"
         onMouseEnter={open}
-        onMouseLeave={scheduleClose}
+        onMouseMove={handleTimelineMouseMove}
+        onMouseLeave={handleTimelineMouseLeave}
       >
         {history.map((pixels, i) => (
           <HistoryThumb
             key={i}
+            index={i}
             pixels={pixels}
             width={spriteWidth}
             height={spriteHeight}
@@ -149,8 +176,10 @@ export function HistoryTimeline() {
             previewing={i === previewIndex}
             label={i === 0 ? "Initial state" : `Stroke ${i}`}
             onClick={() => jumpToHistory(i)}
-            onHoverIn={() => setPreviewIndex(i)}
-            onHoverOut={() => setPreviewIndex(null)}
+            onFocusPreview={() => {
+              if (i !== historyIndex) setPreviewIndex(i);
+            }}
+            onBlurPreview={() => setPreviewIndex(null)}
           />
         ))}
       </nav>
