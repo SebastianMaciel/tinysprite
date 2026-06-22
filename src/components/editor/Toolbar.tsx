@@ -90,7 +90,6 @@ export function Toolbar({
     <header className={styles.toolbar}>
       <div className={styles.brand}>
         <span className={styles.brandName}>TinySprite</span>
-        <span className={styles.brandTag}>milestone 3</span>
       </div>
       <div className={styles.meta}>
         <span className={styles.size}>

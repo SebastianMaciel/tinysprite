@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Sprite } from "@/types/sprite";
 import type { View } from "@/hooks/useCanvasView";
+import { useTheme } from "@/hooks/useTheme";
 import { compositePixels, createBackingCanvas, render } from "@/lib/sprite/render";
 import styles from "./SpriteCanvas.module.css";
 
@@ -76,6 +77,7 @@ export function SpriteCanvas({
   const [isDragging, setIsDragging] = useState(false);
   const [isPainting, setIsPainting] = useState(false);
   const dragRef = useRef<DragState | null>(null);
+  const { theme } = useTheme();
 
   const backingCanvas = useMemo(() => {
     if (typeof document === "undefined") return null;
@@ -94,6 +96,7 @@ export function SpriteCanvas({
     canvas.style.width = `${containerSize.w}px`;
     canvas.style.height = `${containerSize.h}px`;
 
+    canvas.dataset.theme = theme;
     const colors = readThemeColors();
     const pixels = compositePixels(sprite);
 
@@ -111,7 +114,7 @@ export function SpriteCanvas({
         ...colors,
       },
     });
-  }, [sprite, view, dpr, containerSize.w, containerSize.h, showGrid, backingCanvas]);
+  }, [sprite, view, dpr, containerSize.w, containerSize.h, showGrid, backingCanvas, theme]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

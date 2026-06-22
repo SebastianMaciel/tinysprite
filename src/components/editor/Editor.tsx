@@ -149,7 +149,7 @@ export function Editor() {
         </main>
       </div>
       <footer className={styles.hint}>
-        click + drag para pintar · scroll para zoom · space + drag para pan · ⌘Z para deshacer
+        click + drag para pintar · scroll para zoom · space + drag para pan · hover los botones para ver atajos
       </footer>
       <Modal
         open={pickerOpen}
