@@ -29,6 +29,7 @@ export interface EditorState {
   activeColor: Color;
   history: Uint32Array[];
   historyIndex: number;
+  previewIndex: number | null;
   strokeActive: boolean;
   strokeDirty: boolean;
   hydrated: boolean;
@@ -41,6 +42,8 @@ export interface EditorState {
   paintFromTo: (x0: number, y0: number, x1: number, y1: number) => void;
   undo: () => void;
   redo: () => void;
+  jumpToHistory: (index: number) => void;
+  setPreviewIndex: (index: number | null) => void;
   newSprite: (width: number, height: number, name?: string) => void;
   hydrateFromStorage: () => void;
 }
@@ -55,6 +58,7 @@ function freshState() {
     activeColor: DEFAULT_ACTIVE_COLOR,
     history: [initialPixels],
     historyIndex: 0,
+    previewIndex: null,
     strokeActive: false,
     strokeDirty: false,
     hydrated: false,
@@ -73,7 +77,7 @@ export const useEditorStore = create<EditorState>((set) => ({
         : { customColors: [...s.customColors, c], activeColor: c },
     ),
 
-  beginStroke: () => set({ strokeActive: true, strokeDirty: false }),
+  beginStroke: () => set({ strokeActive: true, strokeDirty: false, previewIndex: null }),
 
   endStroke: () =>
     set((s) => {
@@ -119,7 +123,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       const idx = s.historyIndex - 1;
       const layer = activeFrame(s.sprite).layers[0];
       layer.pixels.set(s.history[idx]);
-      return { historyIndex: idx, sprite: { ...s.sprite } };
+      return { historyIndex: idx, sprite: { ...s.sprite }, previewIndex: null };
     }),
 
   redo: () =>
@@ -128,7 +132,27 @@ export const useEditorStore = create<EditorState>((set) => ({
       const idx = s.historyIndex + 1;
       const layer = activeFrame(s.sprite).layers[0];
       layer.pixels.set(s.history[idx]);
-      return { historyIndex: idx, sprite: { ...s.sprite } };
+      return { historyIndex: idx, sprite: { ...s.sprite }, previewIndex: null };
+    }),
+
+  jumpToHistory: (index) =>
+    set((s) => {
+      if (s.strokeActive) return {};
+      if (index < 0 || index >= s.history.length || index === s.historyIndex) {
+        return { previewIndex: null };
+      }
+      const layer = activeFrame(s.sprite).layers[0];
+      layer.pixels.set(s.history[index]);
+      return { historyIndex: index, sprite: { ...s.sprite }, previewIndex: null };
+    }),
+
+  setPreviewIndex: (index) =>
+    set((s) => {
+      if (s.strokeActive) return { previewIndex: null };
+      if (index === null) return { previewIndex: null };
+      if (index < 0 || index >= s.history.length) return { previewIndex: null };
+      if (index === s.historyIndex) return { previewIndex: null };
+      return { previewIndex: index };
     }),
 
   newSprite: (width, height, name) =>
@@ -139,6 +163,7 @@ export const useEditorStore = create<EditorState>((set) => ({
         sprite,
         history: [initialPixels],
         historyIndex: 0,
+        previewIndex: null,
         strokeActive: false,
         strokeDirty: false,
       };
@@ -161,6 +186,7 @@ export const useEditorStore = create<EditorState>((set) => ({
             : DEFAULT_ACTIVE_COLOR,
         history: [initialPixels],
         historyIndex: 0,
+        previewIndex: null,
         hydrated: true,
       };
     }),

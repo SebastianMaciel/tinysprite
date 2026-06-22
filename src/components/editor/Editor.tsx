@@ -7,6 +7,7 @@ import { useHotkeys } from "@/hooks/useHotkeys";
 import { Modal } from "@/components/ui/Modal";
 import { ColorPicker } from "./ColorPicker";
 import { ExportModal } from "./ExportModal";
+import { HistoryTimeline } from "./HistoryTimeline";
 import { NewSpriteModal } from "./NewSpriteModal";
 import { Toolbar } from "./Toolbar";
 import { Sidebar } from "./Sidebar";
@@ -35,6 +36,9 @@ export function Editor() {
   const addCustomColor = useEditorStore((s) => s.addCustomColor);
   const newSprite = useEditorStore((s) => s.newSprite);
   const hydrateFromStorage = useEditorStore((s) => s.hydrateFromStorage);
+  const history = useEditorStore((s) => s.history);
+  const previewIndex = useEditorStore((s) => s.previewIndex);
+  const previewPixels = previewIndex !== null ? history[previewIndex] : undefined;
 
   useEffect(() => {
     hydrateFromStorage();
@@ -140,12 +144,14 @@ export function Editor() {
             showGrid={showGrid}
             isSpaceDown={isSpaceDown}
             canPan={canPan}
+            previewPixels={previewPixels}
             onWheel={zoomAtCursor}
             onPan={panBy}
             onPaintStart={handlePaintStart}
             onPaintMove={handlePaintMove}
             onPaintEnd={endStroke}
           />
+          <HistoryTimeline />
         </main>
       </div>
       <footer className={styles.hint}>

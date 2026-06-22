@@ -15,6 +15,7 @@ interface Props {
   showGrid: boolean;
   isSpaceDown: boolean;
   canPan: boolean;
+  previewPixels?: Uint32Array;
   onWheel: (dir: 1 | -1, cursorX: number, cursorY: number) => void;
   onPan: (dx: number, dy: number) => void;
   onPaintStart: (x: number, y: number) => void;
@@ -67,6 +68,7 @@ export function SpriteCanvas({
   showGrid,
   isSpaceDown,
   canPan,
+  previewPixels,
   onWheel,
   onPan,
   onPaintStart,
@@ -98,7 +100,7 @@ export function SpriteCanvas({
 
     canvas.dataset.theme = theme;
     const colors = readThemeColors();
-    const pixels = compositePixels(sprite);
+    const pixels = previewPixels ?? compositePixels(sprite);
 
     render({
       ctx,
@@ -114,7 +116,7 @@ export function SpriteCanvas({
         ...colors,
       },
     });
-  }, [sprite, view, dpr, containerSize.w, containerSize.h, showGrid, backingCanvas, theme]);
+  }, [sprite, view, dpr, containerSize.w, containerSize.h, showGrid, backingCanvas, theme, previewPixels]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
