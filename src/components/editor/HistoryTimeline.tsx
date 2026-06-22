@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useEditorStore } from "@/stores/editor";
 import styles from "./HistoryTimeline.module.css";
+
+const CLOSE_DELAY_MS = 2000;
 
 interface ThumbProps {
   pixels: Uint32Array;
@@ -76,24 +78,70 @@ export function HistoryTimeline() {
   const jumpToHistory = useEditorStore((s) => s.jumpToHistory);
   const setPreviewIndex = useEditorStore((s) => s.setPreviewIndex);
 
+  const [isOpen, setIsOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelClose = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const open = useCallback(() => {
+    cancelClose();
+    setIsOpen(true);
+  }, [cancelClose]);
+
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimerRef.current = setTimeout(() => {
+      setIsOpen(false);
+      setPreviewIndex(null);
+      closeTimerRef.current = null;
+    }, CLOSE_DELAY_MS);
+  }, [cancelClose, setPreviewIndex]);
+
+  useEffect(() => () => cancelClose(), [cancelClose]);
+
   if (history.length <= 1) return null;
 
   return (
-    <nav className={styles.timeline} aria-label="History">
-      {history.map((pixels, i) => (
-        <HistoryThumb
-          key={i}
-          pixels={pixels}
-          width={spriteWidth}
-          height={spriteHeight}
-          active={i === historyIndex}
-          previewing={i === previewIndex}
-          label={i === 0 ? "Initial state" : `Stroke ${i}`}
-          onClick={() => jumpToHistory(i)}
-          onHoverIn={() => setPreviewIndex(i)}
-          onHoverOut={() => setPreviewIndex(null)}
-        />
-      ))}
-    </nav>
+    <>
+      <button
+        type="button"
+        className={`${styles.trigger} ${isOpen ? styles.triggerHidden : ""}`}
+        onMouseEnter={open}
+        onMouseLeave={scheduleClose}
+        onFocus={open}
+        onBlur={scheduleClose}
+        aria-expanded={isOpen}
+        aria-controls="history-timeline"
+      >
+        time travel
+      </button>
+      <nav
+        id="history-timeline"
+        className={`${styles.timeline} ${isOpen ? styles.timelineOpen : ""}`}
+        aria-label="History timeline"
+        onMouseEnter={open}
+        onMouseLeave={scheduleClose}
+      >
+        {history.map((pixels, i) => (
+          <HistoryThumb
+            key={i}
+            pixels={pixels}
+            width={spriteWidth}
+            height={spriteHeight}
+            active={i === historyIndex}
+            previewing={i === previewIndex}
+            label={i === 0 ? "Initial state" : `Stroke ${i}`}
+            onClick={() => jumpToHistory(i)}
+            onHoverIn={() => setPreviewIndex(i)}
+            onHoverOut={() => setPreviewIndex(null)}
+          />
+        ))}
+      </nav>
+    </>
   );
 }
