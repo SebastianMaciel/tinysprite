@@ -2,6 +2,7 @@
 
 import { formatCombo } from "@/lib/hotkeys";
 import { useIsMac } from "@/hooks/useIsMac";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Toolbar.module.css";
 
 interface Props {
@@ -143,6 +144,8 @@ export function Toolbar({
           onClick={onToggleGrid}
           title="Toggle grid"
         />
+        <span className={styles.actionsDivider} aria-hidden="true" />
+        <ThemeToggle />
       </div>
     </header>
   );
